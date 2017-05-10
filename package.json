@@ -1,0 +1,24 @@
+{
+  "name": "watch-auth-bitch",
+  "version": "1.0.0",
+  "description": "Generic authentication module, with didatic purposes only",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aramisf/watch-auth-bitch.git"
+  },
+  "keywords": [
+    "watch",
+    "auth",
+    "bitch"
+  ],
+  "author": "aramisf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aramisf/watch-auth-bitch/issues"
+  },
+  "homepage": "https://github.com/aramisf/watch-auth-bitch#readme"
+}
