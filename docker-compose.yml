@@ -2,21 +2,21 @@ wab:
   build: .
   container_name: wab
   command: /bin/bash -c "while [ true ]; do sleep 10; done"
-	environment:
+  environment:
     POSTGRES_USER: root
     POSTGRES_PASSWORD: secretpassword
   ports:
     - "8080:8080"
   links:
     - mongo
-		- pg
+    - pg
   volumes:
     - ".:/wab"
 
 mongo:
   image: mongo:3.4
   container_name: wab_db
-	environment:
+  environment:
     POSTGRES_USER: root
     POSTGRES_PASSWORD: secretpassword
   ports: ["5432:5432"]
@@ -25,7 +25,7 @@ mongo:
 pg:
   image: postgres:9.6
   container_name: wab_db
-	environment:
+  environment:
     POSTGRES_USER: root
     POSTGRES_PASSWORD: secretpassword
   ports: ["5432:5432"]
