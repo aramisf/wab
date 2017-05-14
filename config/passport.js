@@ -1,6 +1,7 @@
 // load all the things we need
 const LocalStrategy = require('passport-local').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
+const TwitterStrategy  = require('passport-twitter').Strategy;
 
 // load up the user model
 const User = require('../app/models/user');
@@ -168,5 +169,50 @@ module.exports = (passport) => {
         });
     }));
 
+    // =========================================================================
+    // TWITTER =================================================================
+    // =========================================================================
+    passport.use(new TwitterStrategy({
+        consumerKey     : configAuth.twitterAuth.consumerKey,
+        consumerSecret  : configAuth.twitterAuth.consumerSecret,
+        callbackURL     : configAuth.twitterAuth.callbackURL
+    },
+    (token, tokenSecret, profile, done) => {
+
+        // make the code asynchronous
+        process.nextTick(() => {
+
+            // User.findOne won't fire until we have all our data back from Twitter
+            User.findOne({ 'twitter.id' : profile.id }, (err, user) => {
+
+                // if there is an error, stop everything and return that
+                // ie an error connecting to the database
+                if (err)
+                    return done(err);
+
+                // if the user is found then log them in
+                if (user) {
+                    return done(null, user); // user found, return that user
+
+                } else {
+                    // if there is no user, create them
+                    var newUser = new User();
+
+                    // set all of the user data that we need
+                    newUser.twitter.id = profile.id;
+                    newUser.twitter.token = token;
+                    newUser.twitter.username = profile.username;
+                    newUser.twitter.displayName = profile.displayName;
+
+                    // save our user into the database
+                    newUser.save((err) => {
+                        if (err)
+                            throw err;
+                        return done(null, newUser);
+                    });
+                }
+            });
+        })
+    }));
 };
 
