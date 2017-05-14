@@ -15,16 +15,13 @@ wab:
 
 mongo:
   image: mongo:3.4
-  container_name: wab_db
-  environment:
-    POSTGRES_USER: root
-    POSTGRES_PASSWORD: secretpassword
-  ports: ["5432:5432"]
-  expose: ["5432"]
+  container_name: wab_mongo
+  ports: ["27017:27017"]
+  expose: ["27017"]
 
 pg:
   image: postgres:9.6
-  container_name: wab_db
+  container_name: wab_pg
   environment:
     POSTGRES_USER: root
     POSTGRES_PASSWORD: secretpassword
