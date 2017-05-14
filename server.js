@@ -41,13 +41,11 @@ require('./app/routes.js')(app, passport); // load our routes and pass in our ap
 app.listen(port);
 console.log('The magic happens on port ' + port);
 
-// Tretas com o mongo dentro dos container?
-// var MONGO_DB;
-// var DOCKER_DB = process.env.DB_1_PORT;
-// if ( DOCKER_DB ) {
-//   MONGO_DB = DOCKER_DB.replace( "tcp", "mongodb" ) + "/dev_db";
-// } else {
-//   MONGO_DB = process.env.MONGODB;
-// }
-//
-// mongoose.connect(MONGO_DB);
+// Failed attempt to solve issues from main container to mongo container :(
+/*
+  var MONGO_DB;
+  var DOCKER_DB = process.env.MONGO_PORT;
+  if ( DOCKER_DB ) {
+    MONGO_DB = DOCKER_DB.replace( "tcp", "mongodb" ) + "/wab-dev";
+  }
+  */

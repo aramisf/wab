@@ -12,7 +12,6 @@ module.exports = (app, passport) => {
     // =====================================
     // show the login form
     app.get('/login', (req, res) => {
-
         // render the page and pass in any flash data if it exists
         res.render('login.ejs', { message: req.flash('loginMessage') });
     });
@@ -30,7 +29,6 @@ module.exports = (app, passport) => {
     // =====================================
     // show the signup form
     app.get('/signup', (req, res) => {
-
         // render the page and pass in any flash data if it exists
         res.render('signup.ejs', { message: req.flash('signupMessage') });
     });
@@ -62,6 +60,19 @@ module.exports = (app, passport) => {
         req.logout();
         res.redirect('/');
     });
+
+    // =====================================
+    // FACEBOOK ROUTES =====================
+    // =====================================
+    // route for facebook authentication and login
+    app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+
+    // handle the callback after facebook has authenticated the user
+    app.get('/auth/facebook/callback',
+        passport.authenticate('facebook', {
+            successRedirect : '/profile',
+            failureRedirect : '/'
+        }));
 };
 
 // route middleware to make sure a user is logged in
