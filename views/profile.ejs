@@ -16,8 +16,6 @@
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
     </div>
 
-    <div class="row">
-
         <!-- LOCAL INFORMATION -->
         <div class="col-sm-6">
             <div class="well">
@@ -32,9 +30,7 @@
             </div>
         </div>
 
-		</div>
 
-    <div class="row">
         <!-- FACEBOOK INFORMATION -->
         <div class="col-sm-6">
             <div class="well">
@@ -49,10 +45,9 @@
 
             </div>
         </div>
-    </div>
 
-    <div class="row">
-				 <!-- TWITTER INFORMATION -->
+
+        <!-- TWITTER INFORMATION -->
         <div class="col-sm-6">
             <div class="well">
                 <h3 class="text-info"><span class="fa fa-twitter"></span> Twitter</h3>
@@ -68,7 +63,20 @@
         </div>
 
 
-    </div>
+        <!-- GOOGLE INFORMATION -->
+        <div class="col-sm-6">
+            <div class="well">
+                <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google</h3>
+
+                    <p>
+                        <strong>id</strong>: <%= user.google.id %><br>
+                        <strong>token</strong>: <%= user.google.token %><br>
+                        <strong>email</strong>: <%= user.google.email %><br>
+                        <strong>name</strong>: <%= user.google.name %>
+                    </p>
+
+            </div>
+        </div>
 
 </div>
 </body>
