@@ -26,8 +26,8 @@ sql_createdb() {
 }
 
 sql_seed() {
-  #PGPASSWORD=$PG_MY_USER_PASSWORD psql -d "$PGDATABASE" -U "$PG_MY_USER" -f sql/users.sql
-  psql -d "$PGDATABASE" -U "$PG_MY_USER" -f sql/users.sql
+  #PGPASSWORD=$PG_MY_USER_PASSWORD psql -d "$PGDATABASE" -U "$PG_MY_USER" -f lib/sql/users.sql
+  psql -d "$PGDATABASE" -U "$PG_MY_USER" -f lib/sql/users.sql
 }
 
 usage() {
