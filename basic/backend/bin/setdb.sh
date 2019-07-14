@@ -4,30 +4,33 @@
 # running the `yarn [ run ] setdb` command.
 . .env
 
+# Default connection for psql, it needs it :/
+PSQL="psql -d postgres"
+
 sql_create_user() {
   USER=${1:-$PG_MY_USER}
   PASS=${2:-$PG_MY_USER_PASSWORD}
-  psql -d "$PGDATABASE" <<< "CREATE USER ${USER} PASSWORD '${PASS}' CREATEDB LOGIN;"
+  $PSQL -c "CREATE USER ${USER} PASSWORD '${PASS}' CREATEDB LOGIN;"
   export PGUSER=$USER
 }
 
 sql_drop_user() {
-  USER=${1:-$PG_MY_USER}
-  psql -d "$PGDATABASE" <<< "DROP USER ${USER};"
-}
-
-sql_dropdb() {
-  dropdb $PGDATABASE
+  USER=${1:-${PG_MY_USER}}
+  $PSQL -c "DROP OWNED BY ${USER};"
+  dropuser ${USER}
 }
 
 sql_createdb() {
   createdb $PGDATABASE -O $PG_MY_USER
-  psql -d "$PGDATABASE" <<< "GRANT ALL PRIVILEGES ON DATABASE \"$PGDATABASE\" TO \"$PG_MY_USER\";"
+  $PSQL -c "GRANT ALL PRIVILEGES ON DATABASE \"$PGDATABASE\" TO \"$PG_MY_USER\";"
+}
+
+sql_dropdb() {
+  dropdb --if-exists $PGDATABASE
 }
 
 sql_seed() {
-  #PGPASSWORD=$PG_MY_USER_PASSWORD psql -d "$PGDATABASE" -U "$PG_MY_USER" -f lib/sql/users.sql
-  psql -d "$PGDATABASE" -U "$PG_MY_USER" -f lib/sql/users.sql
+  psql -d $PGDATABASE -U "$PG_MY_USER" -f lib/sql/users.sql
 }
 
 usage() {
