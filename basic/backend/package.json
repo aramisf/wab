@@ -1,0 +1,14 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "setdb": "bash bin/setdb.sh -d",
+    "dropdb": "bash bin/setdb.sh -D",
+    "set-db-user": "bash bin/setdb.sh -u",
+    "drop-db-user": "bash bin/setdb.sh -U",
+    "db-up": "yarn run setdb && yarn run set-db-user",
+    "db-down": "yarn run dropdb && yarn run drop-db-user"
+  }
+}
