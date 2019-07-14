@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # Make sure you call this script only from npm scripts in package.json (i.e. by
-# running the `yarn run setdb` command.
+# running the `yarn [ run ] setdb` command.
 . .env
 
 sql_create_user() {
-  USER=${1:-$PG_NEW_USER}
-  PASS=${2:-$PG_NEW_USER_PASSWORD}
+  USER=${1:-$PG_MY_USER}
+  PASS=${2:-$PG_MY_USER_PASSWORD}
   psql -d "$PGDATABASE" <<< "CREATE USER ${USER} PASSWORD '${PASS}' CREATEDB LOGIN;"
   export PGUSER=$USER
 }
 
 sql_drop_user() {
-  USER=${1:-$PG_NEW_USER}
+  USER=${1:-$PG_MY_USER}
   psql -d "$PGDATABASE" <<< "DROP USER ${USER};"
 }
 
@@ -21,7 +21,13 @@ sql_dropdb() {
 }
 
 sql_createdb() {
-  createdb $PGDATABASE
+  createdb $PGDATABASE -O $PG_MY_USER
+  psql -d "$PGDATABASE" <<< "GRANT ALL PRIVILEGES ON DATABASE \"$PGDATABASE\" TO \"$PG_MY_USER\";"
+}
+
+sql_seed() {
+  #PGPASSWORD=$PG_MY_USER_PASSWORD psql -d "$PGDATABASE" -U "$PG_MY_USER" -f sql/users.sql
+  psql -d "$PGDATABASE" -U "$PG_MY_USER" -f sql/users.sql
 }
 
 usage() {
@@ -31,7 +37,7 @@ usage() {
 
 (($# == 0)) && usage
 
-while getopts "uUdD" opt
+while getopts "uUdDs" opt
 do
   case $opt in
     u)
@@ -54,7 +60,11 @@ do
       sql_dropdb
       exit 0
       ;;
-    *)
+    s)
+      printf "Seeding '$PGDATABASE' database\n"
+      sql_seed
+      exit 0
+      ;;
   esac
 done
 
