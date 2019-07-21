@@ -1,4 +1,36 @@
 const hash = require('../lib/crypto');
+const Session = require('../lib/session');
+
+const HOUR = 3600 * 1000;
+const DAY = 24 * HOUR;
+
+const COOKIE_LIFETIME = process.env.PRODUCTION ? Date.now() + 5 * DAY : HOUR;
+
+const session_handler = (username, res, pool) => {
+  const session = new Session(username);
+  const session_str = session.toString();
+
+  return new Promise( (resolve, reject) => {
+    pool.query(
+      'UPDATE users SET session_id = $1 WHERE username_hash = $2',
+      [session.id, hash(username)],
+      (q_err, q_res) => {
+        if (q_err) return reject(q_err);
+
+
+        // http://expressjs.com/en/api.html#res.cookie
+        res.cookie('session_str', session_str, {
+          //secure: true, // use https (in production)
+          httpOnly: true, // disallow js clients to access the cookie data
+          //expire: Date.now() + COOKIE_LIFETIME,
+          maxAge: COOKIE_LIFETIME,
+        });
+        resolve();
+      }
+    );
+  });
+};
+
 
 module.exports = function(router, pool) {
   router.get('/all', (req, res, next) => {
@@ -13,11 +45,14 @@ module.exports = function(router, pool) {
     // try to inject some SQL
     //console.log('REQ:', req.params, req.query)
     //pool.query(`SELECT * FROM users WHERE username_hash = ${req.params.id}`, (q_err, q_res) => {
-    pool.query('SELECT * FROM users WHERE username_hash = $1', [ req.params.id ], (q_err, q_res) => {
-      if (q_err) return next(q_err);
+    pool.query(
+      'SELECT * FROM users WHERE username_hash = $1',
+      [ req.params.id ],
+      (q_err, q_res) => {
+        if (q_err) return next(q_err);
 
-      res.json(q_res.rows);
-    });
+        res.json(q_res.rows);
+      });
   });
 
   router.post('/new', (req, res, next) => {
@@ -37,7 +72,11 @@ module.exports = function(router, pool) {
             (q1_err, q1_res) => {
               if (q1_err) return next(q1_err);
 
-              res.json({ msg: 'Successfully created user!' });
+              session_handler(username, res, pool)
+                .then(_ => {
+                  res.json({ msg: 'Successfully created user!' });
+                })
+                .catch(err => next(err));
             }
           )
         } else {
