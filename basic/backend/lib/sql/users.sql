@@ -1,6 +1,6 @@
 CREATE TABLE users(
-  username_hash character(1024),
-  password_hash character(1024),
+  username_hash character(128), -- hexa representation of a 512 bit string
+  password_hash character(128), -- hexa representation of a 512 bit string
   session_id character(36)
 );
 
